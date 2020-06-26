@@ -2,8 +2,8 @@
     <div class='nav'>
         <nav>
             <ul>
-                <li><router-link to="/characters">Characters</router-link></li>
-                <li><router-link to="/notes">Notes</router-link></li>
+                <li><router-link class="link" to="/characters">Characters</router-link></li>
+                <li><router-link class="link" to="/notes">Notes</router-link></li>
             </ul>
         </nav>
     </div>
@@ -19,21 +19,25 @@ export default {
 
 <style scoped>
     li {
+        color: #FA5959;
         font-size: 2rem;
         display: inline-block;
-        padding: 1rem;
         text-align: center;
         outline: none;
     }
     
-    li:hover {
+    .link:first-of-type {
+        margin-right: 20px;
+    }
+    .link {
+        padding: 1rem;
+        color: #FA5959;
+        text-decoration: none;
+    }
+    .link:hover {
         cursor: pointer;
         color: #fff;
-        background-color: teal;
-    }
-
-    li:visited {
-        text-decoration: none;
+        background-color: #FA5959;
     }
 
 </style>

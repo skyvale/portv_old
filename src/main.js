@@ -6,12 +6,12 @@ import Notes from './components/Notes';
 
 // import stuff from FontAwesome
 import { library } from '@fortawesome/fontawesome-svg-core';
-import { faCoffee } from '@fortawesome/free-solid-svg-icons';
+import { faPlusCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
 // FontAwesome
-library.add(faCoffee)
-Vue.component('font-awesome-icon', FontAwesomeIcon) //FontAwesomeIcon is Vue component
+library.add(faPlusCircle); // add icon
+Vue.component('font-awesome-icon', FontAwesomeIcon); //FontAwesomeIcon is Vue component
 
 Vue.config.productionTip = false
 

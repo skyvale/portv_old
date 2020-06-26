@@ -1,7 +1,6 @@
 <template>
     <div>
         <h1>Notes</h1>
-        <font-awesome-icon icon="coffee" />
         <button @click="createNote" class="create-new-btn">New Note</button>
         <div class="notes">
             <nav>
@@ -34,6 +33,27 @@ export default {
             currentNote: null
         }
     },
+    mounted() {
+        // lifecycle hook, happens before page load
+
+        // check if any notes are already stored in local storage
+        if (localStorage.notes) {
+            this.notes = JSON.parse(localStorage.notes);
+        }
+
+    },
+    watch: {
+        notes: {
+            handler(newNotes) {
+                // this method will be called every time the notes data is updated
+
+                // store the changes in local storage
+                localStorage.notes = JSON.stringify(newNotes);                
+            },
+            deep: true // detects nested changes - content of the notes object
+        }
+
+    },
     methods: {
 
         createNote() {
@@ -64,7 +84,7 @@ export default {
         display: inline-block;
         font-size: 2.4rem;
         text-transform: uppercase;
-        color: rgba(223, 42, 223, 0.993);
+        color: #FA5959;
         margin: 2rem;
     }
 
@@ -76,7 +96,7 @@ export default {
     .create-new-btn {
         color: #fff;
         padding: 1rem;
-        background-color: rgba(182, 117, 207);
+        background-color: #FA5959;
         border-radius: 5px;
     }
 
@@ -91,10 +111,10 @@ export default {
     }
     button:hover {
         cursor: pointer;
-        background-color:rgba(97, 59, 139, 0.993)
+        background-color: #8B1717;
     }
     button.active {
-        background: rgba(182, 117, 207);
+        background: #FA5959;
         color: white;
     }
 
@@ -110,9 +130,11 @@ export default {
 
     .notes {
         display: flex;
+        margin-left: 1rem;
     }
 
     .current-note {
+        justify-content: left;
         flex: 1;
     }
     .current-note input, .current-note textarea {
@@ -123,7 +145,7 @@ export default {
     }
     .current-note input:hover, .current-note textarea:hover,
     .current-note input:focus, .current-note textarea:focus {
-        background: lavender;
+        background: #FFE5E5;
     }
     .current-note input {
         font-size: 3.6rem;
@@ -132,10 +154,17 @@ export default {
         letter-spacing: -.1rem;
         margin-bottom: 2.0rem;
         margin-top: 0;
+        color: #8B1717;
+        background-color: #FFE5E5;
     }
     .current-note textarea {
+        display: block;
+        min-width: 800px;
+        max-width: 1400px;
+        min-height: 400px;
         font-size: 18px;
-        color: #606c76;
+        color: #8B1717;
+        background-color: #FFE5E5;
     }
 
 </style>
