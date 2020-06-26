@@ -1,9 +1,17 @@
 import Vue from 'vue';
 import App from './App.vue';
 import VueRouter from 'vue-router';
-import Explore from './components/Explore';
 import Characters from './components/Characters';
 import Notes from './components/Notes';
+
+// import stuff from FontAwesome
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { faCoffee } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+
+// FontAwesome
+library.add(faCoffee)
+Vue.component('font-awesome-icon', FontAwesomeIcon) //FontAwesomeIcon is Vue component
 
 Vue.config.productionTip = false
 
@@ -14,13 +22,11 @@ import "@/assets/reset.css";
 Vue.use(VueRouter);
 
 // define route components
-const explore = Explore;
 const characters = Characters;
 const notes = Notes;
 
 // create the routes using components
 const routes = [
-  { path: '/explore', component: explore},
   { path: '/characters', component: characters},
   { path: '/notes', component: notes}
 ];

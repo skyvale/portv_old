@@ -1,7 +1,8 @@
 <template>
     <div>
         <h1>Notes</h1>
-        <button @click="createNote" class="create-new-btn">Create New Note</button>
+        <font-awesome-icon icon="coffee" />
+        <button @click="createNote" class="create-new-btn">New Note</button>
         <div class="notes">
             <nav>
                 <!-- this p will render if there are no notes in array -->
@@ -13,7 +14,7 @@
                     </li>
                 </ul>
             </nav>
-            <!-- Will only render currentNote if there are notes available -->
+            <!-- Will only render currentNote if there are notes available --> 
             <div v-if="currentNote" class="current-note">
                 <!-- two way data binding -->
                 <input v-model="currentNote.title" type="text" ref="noteTitle">

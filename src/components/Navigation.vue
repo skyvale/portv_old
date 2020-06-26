@@ -2,7 +2,6 @@
     <div class='nav'>
         <nav>
             <ul>
-                <li><router-link to="/explore">Explore</router-link></li>
                 <li><router-link to="/characters">Characters</router-link></li>
                 <li><router-link to="/notes">Notes</router-link></li>
             </ul>

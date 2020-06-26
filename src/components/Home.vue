@@ -1,6 +1,6 @@
 <template>
   <div class="header">
-    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcS8aQJqx1hPeGg9Ez23WMKkTGhEb4BnkvKL6w&usqp=CAU" alt="cute notepad">
+    <img class="logo" src="../assets/logo.png" alt="pokememo logo">
     <Navigation class="nav" />
   </div>
 </template>
@@ -22,10 +22,10 @@ export default {
     .header {
         display: block;
         height: 175px;
-        background-color: #add;
+        border-bottom: 3px solid #FA5959;
     }
 
-    img {
+    .logo {
         height: 75px;
         width: 75px;
         margin: 1rem;

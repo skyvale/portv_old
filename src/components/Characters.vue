@@ -14,11 +14,11 @@ export default {
     methods: {
         createMon() {
 
+            localStorage.clear();
+
             // pull out object of categories from local storage
             let data = JSON.parse(localStorage.getItem('pokemon'));
             console.log("data: ", data);
-            console.log("data l: ", data.length); // !!TODO undefined
-
 
             if (data != null) {
 
@@ -49,29 +49,41 @@ export default {
 
                 // for (let i = 0; data.length )
 
-            } else if (data.length > 0){
+            } else if (data === null){
 
-                // load in default pokemon from api
-                fetch('https://pokeapi.co/api/v2/pokemon/1')
-                    .then( (data) => data.json())
-                    .then( (pokemon) => generateDefault(pokemon) )
+                // create three default pokemon to populate page
+                const defaultMonUrls = [
+                    'https://pokeapi.co/api/v2/pokemon/1',
+                    'https://pokeapi.co/api/v2/pokemon/4',
+                    'https://pokeapi.co/api/v2/pokemon/7'
+                ];
 
-                
                 // using the fetched data, generate pokemon
-                const generateDefault = (data) => {
-                    console.log("generatemon: ", data);
 
-                    const htmlTemplate = `
-                        <img src="${data.sprites.front_default}" alt="bulbsaur" width="150px" height="150px">
-                    `
+                    // load in default pokemon from api
+                    Promise.all(defaultMonUrls.map( url =>
+                        fetch(url)
+                            .then( (data) => data.json())               
+                    ))
+                    .then( (pokemon) => generateDefault(pokemon) ) 
 
+                    // generate default pokemon on the page
                     const pokemonHtml = document.querySelector(".pokemon");
-                    console.log("html: ", pokemonHtml);
-                    pokemonHtml.insertAdjacentHTML = ('beforeend', htmlTemplate);
+                    const generateDefault = (data) => {
 
-                    // set local storage
-                    localStorage.setItem('pokemon', JSON.stringify(data));
-                }
+                        let htmlTemplate = ``;
+                        for (let i = 0; i < 3; i++){
+                            htmlTemplate = `
+                                <img src="${data[i].sprites.front_default}" alt="${data[i].name}" class="single-mon">
+                                <p>Testing...</p>
+                            `
+                            console.log("html: ", htmlTemplate);
+                            pokemonHtml.insertAdjacentHTML = ('beforeend', htmlTemplate);
+
+                            // set local storage
+                            localStorage.setItem('pokemon', JSON.stringify(data));
+                        }
+                    }                
             }
         }
     },
@@ -86,4 +98,24 @@ export default {
     h1 {
         font-size: 2.4rem;
     }
+
+    .pokemon {
+        display: flex;
+        flex-direction: row;
+    }
+
+    .single-mon {
+        display: inline-block;
+        width: 150px;
+        height: 150px;
+        padding: 1rem;
+        border: 1px solid grey;
+        border-radius: 50%;
+    }
+
+    p {
+        color: red;
+        font-size: 2.4rem;
+    }
+
 </style>
