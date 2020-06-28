@@ -1,18 +1,20 @@
 <template>
     <div class="characters-page">
         <h1>Characters</h1>
-        <div class="pokemon">
+        <div>
             <div class="add-pokemon">
-                <font-awesome-icon icon="plus-circle" class="add-icon" />
-                <p class="add-words">Add members to your team!</p>
+                <font-awesome-icon icon="plus-circle" id="add-icon" @click="openForm" />
+                <p id="add-words" @click="openForm">Add members to your team!</p>
+            </div>
+            <div class="pokemon">
                 <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png" alt="bulbasaur" class="single-mon" width="150px" height="150px">
             </div>
         </div>
-        <div>
-            <form action="#">
+        <div class="modal">
+            <form v-show="formIsClosed" action="#">
                 <div class="form-header">
                     <h2 id="form-title">Add a Pokemon</h2>
-                    <font-awesome-icon icon="plus-circle" class="add-icon" />
+                    <font-awesome-icon icon="times-circle" id="close-form-btn" @click="closeForm" />
                 </div>
                 <p>
                     <label for="nickname">Nickname</label>
@@ -40,13 +42,20 @@
 <script>
 export default {
     name: 'Characters',
+    data: () => {
+        return {
+            formIsClosed: false
+        }
+    },
     methods: {
         createMon() {
 
+            console.log("within createMon");
+
             // pull out object of categories from local storage
             let data = JSON.parse(localStorage.getItem('pokemon'));
-            console.log("data: ", data);
 
+            console.log("data: ", data.id);
             if (data != null) {
 
                 // use the already stored pokemon's id to fetch info from api
@@ -118,6 +127,35 @@ export default {
                     }
                 */              
             }
+        },
+        openForm() {
+            
+            // when run, this function will open the form by setting its display to block
+            // form is closed is set to false
+
+            this.formIsClosed = false;
+
+            const form = document.querySelector("form");
+
+            if (form.style.display == 'none') {
+              form.style.display = 'block';
+            }
+
+        },
+        closeForm() {
+
+            // this function closes the form by setting its display to none
+            // form is closed is set to true
+
+            this.formIsClosed = true;
+
+            const form = document.querySelector("form");
+
+            if (form.style.display == 'block') {
+              form.style.display = 'none';
+            }
+
+            this.formIsClosed = !this.formIsClosed // not sure what this line means, but it works
         }
     },
     mounted() {
@@ -160,32 +198,42 @@ export default {
         justify-content: center;
         padding: 1rem;
     }
-    .add-words {
+    #add-words {
         padding-left: 10px;
         display: inline-block;
         color: #FA5959;
         font-size: 1.8rem;
     }
-    .add-words:hover {
+    #add-words:hover {
         cursor: pointer;
     }
-    .add-icon {
+    #add-icon {
         display: inline-block;
         color: #FA5959;
         height: 30px;
         width: 30px;
     }
-    .add-icon:hover {
+    #add-icon:hover {
         cursor: pointer;
     }
 
     /* FORM */
 
+    .modal {
+        position: fixed;
+        z-index: 1000;
+        top: 50%;
+        left: 50%;
+    }
+
     form {
+        display: none;
+        transform: translate(-50%, -50%);
         text-align: center;
         margin: 0 auto;
         width: 600px;
         border: 3px solid #FA5959;
+        background-color: #fff;
         border-radius: 5px;
     }
 
@@ -238,6 +286,20 @@ export default {
     #submit-btn:hover {
         cursor: pointer;
         background-color: #8B1717;
+    }
+
+    #close-form-btn {
+        display: block;
+        position: absolute;
+        right: 15px;
+        top: 15px;
+        color: #fff;
+        height: 30px;
+        width: 30px;
+    }
+    #close-form-btn:hover {
+        cursor: pointer;
+        color: #8B1717;
     }
 
 </style>

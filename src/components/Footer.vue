@@ -16,6 +16,12 @@ export default {
 <style scoped>
 
     .footer {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        box-sizing: border-box;
+        width: 100%;
+        overflow: hidden;
         background-color: #FA5959;
         padding: 2rem;
     }
