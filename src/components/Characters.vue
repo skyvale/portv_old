@@ -2,7 +2,8 @@
 	<div class="characters-page">
 
 		<h1>Characters</h1>
-
+		<Searchbar class="searchbar" />
+		
 		<div>
 
 			<div class="add-pokemon">
@@ -52,7 +53,7 @@
 				<div class="detail-form-header">
 					<h2>Pokemon Details</h2>
 					<font-awesome-icon icon="times-circle" id="close-detail-form-btn" @click="closeDetailForm"/>
-					<font-awesome-icon icon="trash" id="delete-pokemon-btn" />
+					<font-awesome-icon icon="trash" id="delete-pokemon-btn" @click="deletePokemon" />
 				</div>
 				<h3>{{ savedNickname }}</h3>
 				<p>{{ savedSpecies }}</p>
@@ -96,11 +97,17 @@
 
 
 <script>
+import Searchbar from './Searchbar';
+
 export default {
 	name: 'Characters',
+	components: {
+		Searchbar
+	},
 	data: () => {
 		return {
 			pokemonData: [],
+			lastClicked: '',
 			formIsClosed: false,
 			formNickname: '',
 			formSpecies: '',
@@ -303,20 +310,14 @@ export default {
 
 					} else { // if localStorage not empty
 
-						// set an empty array to hold the pokemon
-						let pokemonArray = [];
-
 						// pulls current pokemon from storage
 						let storedMons = JSON.parse(localStorage.getItem('pokemon')) || [];
 
-						// sets the localStorage to the array
-						pokemonArray = [storedMons];
-
 						// appends the new pokemon to the array of current pokemon
-						pokemonArray.push(newPokemon);
+						storedMons.push(newPokemon);
 
 						// shove all the pokemon back in local storage
-						localStorage.setItem('pokemon', JSON.stringify(pokemonArray));					
+						localStorage.setItem('pokemon', JSON.stringify(storedMons));					
 					
 					}
 
@@ -358,7 +359,27 @@ export default {
 			} else {
 				this.savedType2 = storedPokemon[e.target.id].type2;
 			}
+
+			// stores event data into last clicked
+			this.lastClicked = e.target;
 			
+		},
+
+		// this will delete the pokemon from localStorage and from the display
+		deletePokemon() {
+			
+			// grab pokemon from localStorage
+			let storedMons = JSON.parse(localStorage.getItem('pokemon'));
+
+			// delete the lastClicked pokemon from the array
+			storedMons.splice(this.lastClicked.id,1);
+
+			// put the edited pokemon back into storage
+			localStorage.setItem('pokemon', JSON.stringify(storedMons));
+
+			// reloads window to update display
+			window.location.reload();			
+
 		}
 	}
 }
@@ -376,6 +397,13 @@ export default {
 	h1 {
 		font-size: 0;
 		color: transparent;
+	}
+
+	/* Searchbar */
+	.searchbar {
+		display: flex;
+		justify-content: center;
+		margin: 1rem auto;
 	}
 
 	.pokemon {

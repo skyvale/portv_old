@@ -3,11 +3,12 @@
 		<h1>Notes</h1>
 		<button @click="createNote" class="create-new-btn">New Note</button>
 		<div class="notes">
+			<font-awesome-icon v-if="notes.length" icon="trash" class="delete-note-btn" @click="deleteNote" />	
 			<nav>
 				<!-- this p will render if there are no notes in array -->
 				<p v-if="!notes.length">No notes saved.</p>
 				<ul v-if="notes.length">
-					<li v-for="note in notes" :key="note.index"> 
+					<li v-for="(note, index) in notes" :key="index"> 
 						<!-- if the note in the for loop matches the current note when clicked on, that note will highlight -->
 						<button @click="currentNote = note" :class="{active: note === currentNote}" class="note-titles" >{{note.title}}</button>
 					</li>
@@ -58,7 +59,11 @@ export default {
 
 		createNote() {
 
-			const newNote = {title: 'New Note', contents: 'Write content here...'};
+			const newNote = {
+				id: '',
+				title: 'New Note', 
+				contents: 'Write content here...'
+				};
 
 			// adds blank note to the array
 			this.notes.push(newNote);
@@ -71,6 +76,14 @@ export default {
 			this.$nextTick(() => {
 				this.$refs.noteTitle.focus; //$refs is bound to ref= on input field
 			});
+
+		},
+
+		// delete the selected note
+		deleteNote() {
+
+			console.log("currentNote: ", this.currentNote);
+			console.log("notes: ", this.notes);
 
 		}
 	}
@@ -93,11 +106,26 @@ export default {
 		font-size: 1.4rem;
 	}
 
+	/* New Note button */
 	.create-new-btn {
 		color: #fff;
 		padding: 1rem;
 		background-color: #FA5959;
 		border-radius: 5px;
+	}
+
+	/* New Note button */
+	.delete-note-btn {
+		position: absolute;
+		top: 10px;
+		right: 25%;
+		color: #FA5959;
+		height: 50px;
+		width: 50px;
+	}
+	.delete-note-btn:hover {
+		cursor: pointer;
+		color: #8B1717;
 	}
 
 	button {
@@ -130,6 +158,7 @@ export default {
 
 	.notes {
 		display: flex;
+		position: relative;
 		margin-left: 1rem;
 	}
 
