@@ -8,11 +8,13 @@ import Notes from './components/Notes';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { faPlusCircle } from '@fortawesome/free-solid-svg-icons';
 import { faTimesCircle } from '@fortawesome/free-solid-svg-icons';
+import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
 // FontAwesome
 library.add(faPlusCircle); // add icon
 library.add(faTimesCircle); // exit icon
+library.add(faTrash); // trash icon
 Vue.component('font-awesome-icon', FontAwesomeIcon); //FontAwesomeIcon is Vue component
 
 Vue.config.productionTip = false

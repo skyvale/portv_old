@@ -10,14 +10,19 @@
 				<p id="add-words" @click="openForm">Add members to your team!</p>
 			</div>
 
-			<div class="pokemon">
-				<img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png" alt="bulbasaur" class="single-mon" width="150px" height="150px">
+			<div>
+				<ul class="pokemon">
+					<!-- Loops through pokemon in localStorage to display on page-->
+					<li v-for="(pokemon, index) in pokemonData" :key="index">
+						<img class="single-mon" :id="index" :src="pokemon.imgUrl" :alt="pokemon.species" @click="openDetails" >
+					</li>
+				</ul>
 			</div>
 
 		</div>
 
 		<div class="modal">
-			<form v-show="formIsClosed" @submit.prevent="formSubmission">
+			<form class="add-pokemon-form" v-show="formIsClosed" @submit.prevent="formSubmission">
 				<div class="form-header">
 					<h2 id="form-title">Add a Pokemon</h2>
 					<font-awesome-icon icon="times-circle" id="close-form-btn" @click="closeForm" />
@@ -42,6 +47,50 @@
 			</form>
 		</div>
 
+		<div class="modal">
+			<form class="pokemon-detail-form"  v-show="detailFormIsClosed">
+				<div class="detail-form-header">
+					<h2>Pokemon Details</h2>
+					<font-awesome-icon icon="times-circle" id="close-detail-form-btn" @click="closeDetailForm"/>
+					<font-awesome-icon icon="trash" id="delete-pokemon-btn" />
+				</div>
+				<h3>{{ savedNickname }}</h3>
+				<p>{{ savedSpecies }}</p>
+				<div class="types">
+					<p id="type1">{{ savedType1 }}</p>
+					<p id="type2">{{ savedType2 }}</p>
+				</div>
+				<p>{{ savedAbility }}</p>
+				<p>{{ savedNature }}</p>
+				<p>{{ savedTrait }}</p>
+				<div>
+					<h3>Moveset:</h3>
+					<ul class="moveset">
+						<div class="column">
+							<li>
+								<label for="move1">Move 1</label>
+								<input id="move1" type="text" v-model="move1">
+							</li>
+							<li>
+								<label for="move3">Move 3</label>
+								<input id="move3" type="text" v-model="move2">
+							</li>													
+						</div>
+						<div class="column">
+							<li>
+								<label for="move2">Move 2</label>
+								<input id="move2" type="text" v-model="move3">
+							</li>
+							<li>
+								<label for="move4">Move 4</label>
+								<input id="move4" type="text" v-model="move4">
+							</li> 						
+						</div>                                               
+					</ul>
+				</div>			
+			</form>
+		</div>
+
 	</div>
 </template>
 
@@ -51,43 +100,72 @@ export default {
 	name: 'Characters',
 	data: () => {
 		return {
+			pokemonData: [],
 			formIsClosed: false,
 			formNickname: '',
 			formSpecies: '',
 			formNature: '',
-			formTrait: ''
+			formTrait: '',
+
+			// the following is for the detail form
+			detailFormIsClosed: false,
+			savedNickname: '',
+			savedSpecies: '',
+			savedType1: '',
+			savedType2: '',
+			savedAbility: '',
+			savedNature: '',
+			savedTrait: '',
+			move1: '',
+			move2: '',
+			move3: '',
+			move4: ''
+
 		}
+	},
+	mounted() {
+
+		// checks if there are any pokemon in localStorage
+		if (localStorage.getItem('pokemon') != null) {
+			this.pokemonData = JSON.parse(localStorage.pokemon);
+		}
+
 	},
 	methods: {
 
-		// loads pokemon
-		loadPokemon() {
-
-			// console.log("within loadPokemon");
-
-			// pull out array of categories from local storage
-			// let data = JSON.parse(localStorage.getItem('pokemon'));
-
-			// console.log('data: ', data);
-		},
-
-		// when run, this function will open the form by setting its display to block
+		// when run, this function will open the form to add a pokemon by setting its display to block
 		openForm() {
 
 			// form is closed is set to false
 			this.formIsClosed = false;
 
 			// gets form html from document
-			const form = document.querySelector("form");
+			const addingForm = document.querySelector(".add-pokemon-form");
 
 			// sets the display so the form is visible
-			if (form.style.display == 'none') {
-				form.style.display = 'block';
+			if (addingForm.style.display == 'none') {
+				addingForm.style.display = 'block';
 			}
 
 		},
 
-		// this function closes the form by setting its display to none
+		// when run, this function will open the DETAILS form by setting its display to block
+		openDetailForm() {
+
+			// detail form is closed is set to false
+			this.detailFormIsClosed = false;
+
+			// gets form html from document
+			const detailForm = document.querySelector(".pokemon-detail-form");
+
+			// sets the display so the form is visible
+			if (detailForm.style.display == 'none') {
+				detailForm.style.display = 'block';
+			}
+
+		},
+
+		// this function closes the adding pokemon form by setting its display to none
 		// form is closed is set to true
 		closeForm() {
 
@@ -102,7 +180,21 @@ export default {
 			this.formIsClosed = !this.formIsClosed // tbh not sure what this line means, but it works *shrug*
 		},
 
-		// this function is called when the user submits a new pokemon using the form
+		// this function closes the DETAILS form by setting its display to none
+		closeDetailForm() {
+
+			this.detailFormIsClosed = true;
+
+			const detailForm = document.querySelector(".pokemon-detail-form");
+
+			if (detailForm.style.display == 'block') {
+				detailForm.style.display = 'none';
+			}
+
+			this.detailFormIsClosed = !this.detailFormIsClosed;
+		},
+
+		// this function is called when the user submits a new pokemon using the adding pokemon form
 		formSubmission() {
 
 			// check if data is all correct
@@ -138,8 +230,6 @@ export default {
 			// using the fetched data, generate pokemon
 			const createNewPokemon = (data) => {
 
-				console.log("New Pokemon: ", data);
-
 				let newPokemon = {};
 
 				// some pokemon have more than one type
@@ -156,8 +246,6 @@ export default {
 						imgUrl: data.sprites.front_default
 					}
 
-					console.log("Created duel type: ", newPokemon);
-
 					// if localStorage is empty, you cant .push to null, so...
 					if (localStorage.length === 0) {
 					
@@ -172,7 +260,6 @@ export default {
 
 						// pulls current pokemon from storage
 						let storedMons = JSON.parse(localStorage.getItem('pokemon')) || [];
-						console.log('localStorage: ', storedMons);
 
 						// appends the new pokemon to the array of current pokemon
 						storedMons.push(newPokemon);
@@ -188,8 +275,9 @@ export default {
 					// close the form
 					this.closeForm();
 
-					// reloads the page so it can update to current
-					// location.reload();
+					// reloads window to update display
+					window.location.reload();
+
 
 				} else { // this will run if the pokemon is monotype
 
@@ -203,15 +291,12 @@ export default {
 						imgUrl: data.sprites.front_default
 					}
 
-					console.log("Created mono type: ", newPokemon);
-
-
 					// if localStorage is empty, you cant .push to null, so...
-					if (localStorage.length === 0) {
+					if (localStorage.getItem('pokemon') === null) {
 					
 						// put the new pokemon into an empty array
 						let pokemonArray = [newPokemon];
-						console.log('pokearray: ', pokemonArray);
+						console.log('pokearray if empty: ', pokemonArray);
 
 						// shove the pokemon back in local storage
 						localStorage.setItem('pokemon', JSON.stringify(pokemonArray));						
@@ -223,13 +308,12 @@ export default {
 
 						// pulls current pokemon from storage
 						let storedMons = JSON.parse(localStorage.getItem('pokemon')) || [];
-						console.log('localStorage: ', storedMons);
 
+						// sets the localStorage to the array
 						pokemonArray = [storedMons];
 
 						// appends the new pokemon to the array of current pokemon
 						pokemonArray.push(newPokemon);
-						console.log('pokearray: ', pokemonArray);
 
 						// shove all the pokemon back in local storage
 						localStorage.setItem('pokemon', JSON.stringify(pokemonArray));					
@@ -241,18 +325,41 @@ export default {
 
 					// close the form
 					this.closeForm();
-
-					// reloads the page so it can update to current
-					// location.reload();
+					
+					// reloads window to update display
+					window.location.reload();
 
 				}
 
 			}
 
+		},
+
+		// this will open the details form when a pokemon is clicked
+		openDetails(e) {
+
+			// open form
+			this.openDetailForm();
+
+			// get pokemon data from storage
+			let storedPokemon = JSON.parse(localStorage.getItem('pokemon'));
+
+			// using the specified pokemon, get and bind the correct data
+			this.savedNickname = storedPokemon[e.target.id].nickname;
+			this.savedSpecies = storedPokemon[e.target.id].species;
+			this.savedAbility = storedPokemon[e.target.id].ability;
+			this.savedNature = storedPokemon[e.target.id].nature;
+			this.savedTrait = storedPokemon[e.target.id].trait;
+			this.savedType1 = storedPokemon[e.target.id].type;
+
+			// not all have pokemon have a second typing, so this checks if they do or not
+			if (storedPokemon[e.target.id].type2 === undefined) {
+				this.savedType2 = '---';
+			} else {
+				this.savedType2 = storedPokemon[e.target.id].type2;
+			}
+			
 		}
-	},
-	mounted() {
-		this.loadPokemon();
 	}
 }
 </script>
@@ -265,7 +372,9 @@ export default {
 		margin: 0 auto;
 	}
 
+	/* Hide the h1, but not from screenreaders */
 	h1 {
+		font-size: 0;
 		color: transparent;
 	}
 
@@ -279,6 +388,7 @@ export default {
 		width: 150px;
 		height: 150px;
 		padding: 1rem;
+		margin: 2rem;
 		border: 2px solid #FFE5E5;
 		border-radius: 50%;
 	}
@@ -291,7 +401,7 @@ export default {
 	/* Add members to your team button*/
 	.add-pokemon {
 		width: 1600px;
-		margin: 0 auto;
+		margin: 1rem auto;
 		display: flex;
 		justify-content: center;
 		padding: 1rem;
@@ -315,8 +425,10 @@ export default {
 		cursor: pointer;
 	}
 
-	/* FORM */
+	/* ================================================= */
+	/* FORMS*/
 
+	/* Applies to both forms */
 	.modal {
 		position: fixed;
 		z-index: 1000;
@@ -324,9 +436,12 @@ export default {
 		left: 50%;
 	}
 
-	form {
+	/* ------------------------------------------ */
+	/* ADD POKEMON FORM */
+
+	.add-pokemon-form {
 		display: none;
-		transform: translate(-50%, -50%);
+		transform: translate(-50%, -50%); /* centers on page */
 		text-align: center;
 		margin: 0 auto;
 		width: 600px;
@@ -351,7 +466,7 @@ export default {
 		background-color: #FA5959;
 	}
 
-	form p {
+	.add-pokemon-form p {
 		text-align: left;
 		font-size: 1.4rem;
 		display: block;
@@ -360,7 +475,7 @@ export default {
 		margin-bottom: 0.5rem;
 	}
 
-	form input {
+	.add-pokemon-form input{
 		display: block;
 		color: #8B1717;
 		background-color: #FFE5E5;
@@ -370,6 +485,7 @@ export default {
 		width: 500px;
 	}
 
+	/* submit button */
 	#submit-btn {
 		font-family: 'Prompt', sans-serif;
 		font-size: 1.6rem;
@@ -387,6 +503,7 @@ export default {
 		background-color: #8B1717;
 	}
 
+	/* exit button */
 	#close-form-btn {
 		display: block;
 		position: absolute;
@@ -399,6 +516,117 @@ export default {
 	#close-form-btn:hover {
 		cursor: pointer;
 		color: #8B1717;
+	}
+
+	/* ------------------------------------------ */
+	/* POKEMON DETAIL FORM */
+
+	.pokemon-detail-form {
+		display: none;
+		transform: translate(-50%, -50%);
+		text-align: center;
+		margin: 0 auto;
+		width: 600px;
+		border: 3px solid #FA5959;
+		background-color: #fff;
+		border-radius: 5px;
+	}
+
+	.detail-form-header {
+		text-align: center;
+		margin: 0 auto;
+		height: 100px;
+		width: 600px;
+		border-top-left-radius: 1px;
+		border-top-right-radius: 1px;
+		background-color: #FA5959;
+	}
+
+	.pokemon-detail-form h2 {
+		color: #fff;
+		font-size: 2rem;
+		padding-top: 2rem;
+	}
+
+	.pokemon-detail-form h3 {
+		font-size: 1.8rem;
+		margin-top: 2rem;
+		color: #FA5959;
+	}
+
+	.pokemon-detail-form .types {
+		display: flex;
+		justify-content: center;
+		color: #8B1717;
+
+	}
+
+	.pokemon-detail-form p {
+		font-size: 1.2rem;
+		margin: 1rem;
+	}
+
+	/* exit button */
+	#close-detail-form-btn {
+		display: block;
+		position: absolute;
+		right: 15px;
+		top: 15px;
+		color: #fff;
+		height: 30px;
+		width: 30px;
+	}
+	#close-detail-form-btn:hover {
+		cursor: pointer;
+		color: #8B1717;
+	}
+
+	/* delete pokemon trash can button */
+	#delete-pokemon-btn {
+		color: #fff;
+		position: absolute;
+		left: 15px;
+		top: 15px;
+		height: 30px;
+		width: 30px;
+	}
+	#delete-pokemon-btn:hover {
+		cursor: pointer;
+		color: #8B1717;
+	}
+
+	/* ----------------------- */
+	/* Moveset */
+
+	/* Hide labels, but not from screenreaders */
+	.pokemon-detail-form label {
+		font-size: 0;
+		color: transparent;
+	}
+
+	.pokemon-detail-form h3:nth-of-type(1) {
+		font-size: 1.4rem;
+		color: #FA5959;
+	}
+	.pokemon-detail-form .moveset {
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+		align-content: space-around;
+		width: 600px;
+	}
+	.pokemon-detail-form .column {
+		display: flex;
+		margin: 1rem;
+		align-content: space-around;
+		flex-direction: column;
+	}
+	.pokemon-detail-form input {
+		margin: 0.5rem;
+		padding: 0.5rem;
+		border-color: #FA5959;
+		border-radius: 5px;
+		outline: 0 none;
 	}
 
 </style>
