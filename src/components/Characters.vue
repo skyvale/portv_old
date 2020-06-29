@@ -2,19 +2,23 @@
 	<div class="characters-page">
 
 		<h1>Characters</h1>
-		<Searchbar class="searchbar" />
+
+		<div class="search-wrapper"> 
+			<input type="text" v-model="search" placeholder="Search by species..." class="search-input">
+			<button class="search-btn">&#128269;</button>
+		</div>
 		
 		<div>
 
 			<div class="add-pokemon">
 				<font-awesome-icon icon="plus-circle" id="add-icon" @click="openForm" />
-				<p id="add-words" @click="openForm">Add members to your team!</p>
+				<p id="add-words" @click="openForm">Add Pokemon</p>
 			</div>
 
 			<div>
 				<ul class="pokemon">
 					<!-- Loops through pokemon in localStorage to display on page-->
-					<li v-for="(pokemon, index) in pokemonData" :key="index">
+					<li v-for="(pokemon, index) in filteredMon" :key="index" >
 						<img class="single-mon" :id="index" :src="pokemon.imgUrl" :alt="pokemon.species" @click="openDetails" >
 					</li>
 				</ul>
@@ -97,17 +101,13 @@
 
 
 <script>
-import Searchbar from './Searchbar';
-
 export default {
 	name: 'Characters',
-	components: {
-		Searchbar
-	},
 	data: () => {
 		return {
 			pokemonData: [],
-			lastClicked: '',
+			lastClicked: '', // keeps track of lastClicked pokemon for deletion,
+			search: '', // receives search data
 			formIsClosed: false,
 			formNickname: '',
 			formSpecies: '',
@@ -135,6 +135,16 @@ export default {
 		// checks if there are any pokemon in localStorage
 		if (localStorage.getItem('pokemon') != null) {
 			this.pokemonData = JSON.parse(localStorage.pokemon);
+		}
+
+	},
+	computed: {
+		filteredMon: function() {
+			return this.pokemonData.filter((pokemon) => {
+				// if the search value is in pokemonData, returns true
+				return pokemon.species.match(this.search);
+				
+			});
 		}
 
 	},
@@ -381,6 +391,7 @@ export default {
 			window.location.reload();			
 
 		}
+
 	}
 }
 </script>
@@ -399,12 +410,38 @@ export default {
 		color: transparent;
 	}
 
+	/* ------------------------------------------ */
 	/* Searchbar */
-	.searchbar {
+	.search-wrapper {
 		display: flex;
 		justify-content: center;
-		margin: 1rem auto;
+		margin: 2rem auto 1rem auto;
+		font-size: 1.6rem;
+	}   
+	.search-input {
+		font-size: inherit;
+		color: #8B1717;
+		background-color: #FFE5E5;
+		border: 2px solid #FA5959;
+		border-radius: 20px 0 0 20px;
+		padding: 0.2rem 0.5rem;
+		outline: none;
 	}
+	.search-btn {
+		font-size: inherit;
+		border: 2px solid #FA5959;
+		background-color: #FA5959;
+		padding-right: 10px; 
+		border-radius: 0 20px 20px 0;
+		border-left: 0;
+		outline: none;
+	}
+	.search-btn:hover {
+		cursor: pointer;
+		background-color: #8B1717;
+		border-color: #8B1717;
+	}
+
 
 	.pokemon {
 		display: flex;
