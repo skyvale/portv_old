@@ -60,7 +60,6 @@ export default {
 		createNote() {
 
 			const newNote = {
-				id: '',
 				title: 'New Note', 
 				contents: 'Write content here...'
 				};
@@ -81,9 +80,16 @@ export default {
 
 		// delete the selected note
 		deleteNote() {
+		
+			// determine which note to remove and thanos snap it
+			const removalIndex = this.notes.indexOf(this.currentNote);
+            this.notes.splice(removalIndex, 1);
 
-			console.log("currentNote: ", this.currentNote);
-			console.log("notes: ", this.notes);
+			// set the localStorage again
+            localStorage.setItem('notes', JSON.stringify(this.notes));
+
+			// refresh display
+			window.location.reload();
 
 		}
 	}
